@@ -21,6 +21,19 @@ add_action( 'wp_enqueue_scripts', 'rag_liked_post_scripts' );
 function rag_get_count_post_likes( $id, $type = 'rag_count_post_likes', $single = true ) {
 	$current_count_likes = get_post_meta( $id, $type, $single );
 
+	/*$arr = array(
+		0 => 'true',
+		1 => 'true',
+		2 => 'true',
+		3 => 'true',
+		4 => 'true',
+	);*/
+
+	/*print_r( $arr );
+	print_r( '<br>' );
+	unset( $arr[ 2 ] );
+	print_r( $arr );*/
+
 	return ( $current_count_likes ? $current_count_likes : 0 );
 }
 
@@ -48,7 +61,16 @@ function my_action_callback() {
 		// мета-поле есть
 		$arr = json_decode( $liked_posts, true );
 
-		if ( in_array( $post_id, $arr ) ) {
+		if ( array_key_exists( $post_id, $arr ) ) {
+			unset( $arr[ $post_id ] );
+			$arr = array_values( $arr );
+			-- $count_post_likes;
+		} else {
+			$arr[ $post_id ] = true;
+			++ $count_post_likes;
+		}
+
+		/*if ( in_array( $post_id, $arr ) ) {
 			$arr = array_filter( $arr, function ( $item ) use ( $post_id ) {
 				return $post_id !== $item;
 			} );
@@ -58,7 +80,7 @@ function my_action_callback() {
 		} else {
 			$arr[] = $post_id;
 			++ $count_post_likes;
-		}
+		}*/
 
 		if ( ! empty( $arr ) ) {
 			$json_arr = json_encode( $arr );
@@ -74,7 +96,7 @@ function my_action_callback() {
 		}
 
 	} else {
-		$json_arr = json_encode( array( $post_id ) );
+		$json_arr = json_encode( array( $post_id => true ) );
 		add_user_meta( $user_id, $key_user_meta, $json_arr );
 		update_post_meta( $post_id, $key_post_meta, ++ $count_post_likes );
 	}
