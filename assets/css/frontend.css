@@ -1,0 +1,30 @@
+.post-like {
+	margin-top: 40px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.post-liked-btn {
+	background-color: #a9a9a9;
+}
+
+.post-liked-btn:hover {
+	background-color: #b9b9b9;
+}
+
+.post-like-count {
+	display: block;
+	text-align: center;
+	width: 30px;
+	height: 30px;
+	margin-left: 20px;
+	line-height: 30px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #fff;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50%;
+	background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 4.43511C10.011 -0.963895 0 -0.161894 0 8.00311C0 12.0711 3.06 17.4841 12 23.0001C20.94 17.4841 24 12.0711 24 8.00311C24 -0.114894 14 -0.995895 12 4.43511V4.43511Z' fill='%23FF0000'/%3E%3C/svg%3E%0A");
+}

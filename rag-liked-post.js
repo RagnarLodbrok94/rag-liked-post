@@ -19,7 +19,8 @@ jQuery( function($) {
 					data: data,
 					success: function(result){
 						$(postLikeCount).text(result.data.countPostLikes);
-						console.log(result.data.countPostLikes);
+						$(postLikeBtn).text(result.data.btnText);
+						$(postLikeBtn).toggleClass(result.data.btnLikeState);
 					}
 				})
 			})

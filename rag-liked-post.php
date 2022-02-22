@@ -12,8 +12,9 @@
 
 // include script
 function rag_liked_post_scripts() {
-	wp_enqueue_script( 'my-custom-script', plugins_url( 'rag-liked-post.js', __FILE__ ), [ 'wp-blocks' ], '', true );
-	wp_localize_script( 'my-custom-script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+	wp_enqueue_style( 'frontend-style', plugins_url( 'assets/css/frontend.css', __FILE__ ) );
+	wp_enqueue_script( 'frontend-script', plugins_url( 'rag-liked-post.js', __FILE__ ), [ 'wp-blocks' ], '', true );
+	wp_localize_script( 'frontend-script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 
 add_action( 'wp_enqueue_scripts', 'rag_liked_post_scripts' );
@@ -26,8 +27,28 @@ function rag_get_count_post_likes( $id, $type = 'rag_count_post_likes', $single 
 
 // Adding a Like Button to Posts
 add_action( 'the_post', function ( \WP_Post $post ) {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$user_id          = get_current_user_id();
 	$post_id          = $post->ID;
 	$count_post_likes = rag_get_count_post_likes( $post_id );
+	$key_user_meta    = 'rag_liked_posts';
+	$liked_posts      = get_user_meta( $user_id, $key_user_meta, true );
+	$btn_text         = 'Like';
+
+	if ( '' !== $liked_posts ) {
+		// мета-поле есть
+		$arr = json_decode( $liked_posts, true );
+
+		foreach ( $arr as $key => $value ) {
+			if ( + $key == $post_id ) {
+				$btn_text       = 'Liked';
+				$btn_like_state = 'post-liked-btn';
+			}
+		}
+	}
 
 	ob_start();
 
@@ -50,11 +71,12 @@ function my_action_callback() {
 
 		if ( array_key_exists( $post_id, $arr ) ) {
 			unset( $arr[ $post_id ] );
-			/*$arr = array_values( $arr );*/
 			-- $count_post_likes;
+			$btn_text = 'Like';
 		} else {
 			$arr[ $post_id ] = true;
 			++ $count_post_likes;
+			$btn_text = 'Liked';
 		}
 
 		if ( ! empty( $arr ) ) {
@@ -74,10 +96,13 @@ function my_action_callback() {
 		$json_arr = json_encode( array( $post_id => true ) );
 		add_user_meta( $user_id, $key_user_meta, $json_arr );
 		update_post_meta( $post_id, $key_post_meta, ++ $count_post_likes );
+		$btn_text = 'Liked';
 	}
 
 	$return = array(
 		'countPostLikes' => $count_post_likes,
+		'btnText'        => $btn_text,
+		'btnLikeState'   => 'post-liked-btn',
 	);
 
 	wp_send_json_success( $return );
