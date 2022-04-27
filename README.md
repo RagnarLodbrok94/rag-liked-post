@@ -16,9 +16,9 @@
 6. The **includes/blocks.php** file registers the block type on the server side.
 
 ### Result
-1. Archive page
+1. **Archive page**  
    ![Archive page](screen/Screenshot_1.jpg)
-2. Gutenberg widget in the front
+3. **Gutenberg widget in the front**  
    ![Archive page](screen/Screenshot_2.jpg)
-3. Gutenberg widget in the editor
+4. **Gutenberg widget in the editor**  
    ![Archive page](screen/Screenshot_3.jpg)
