@@ -1,0 +1,32 @@
+{
+  "apiVersion": 2,
+  "name": "rag-liked-post/block-example",
+  "title": "Block example",
+  "description": "Display block example.",
+  "category": "widgets",
+  "icon": "megaphone",
+  "keywords": [
+    "listing",
+    "rating",
+    "popular"
+  ],
+  "attributes": {
+    "content": {
+      "type": "array",
+      "source": "children",
+      "selector": "p"
+    },
+    "alignment": {
+      "type": "string",
+      "default": "none"
+    },
+    "bg_color": {
+      "type": "string",
+      "default": "#000000"
+    },
+    "text_color": {
+      "type": "string",
+      "default": "#ffffff"
+    }
+  }
+}

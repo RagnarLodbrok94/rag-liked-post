@@ -10,11 +10,14 @@
  * License:     GPL-2.0+
  */
 
+define( 'RAG_LIKED_POST__FILE__', __FILE__ );
+define( 'RAG_LIKED_POST_PATH', plugin_dir_path( RAG_LIKED_POST__FILE__ ) );
+
 // include script
 function rag_liked_post_scripts() {
-	wp_enqueue_style( 'frontend-style', plugins_url( 'assets/css/frontend.css', __FILE__ ) );
-	wp_enqueue_script( 'frontend-script', plugins_url( 'rag-liked-post.js', __FILE__ ), [ 'wp-blocks' ], '', true );
-	wp_localize_script( 'frontend-script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+	wp_enqueue_style( 'rag-liked-post-frontend-style', plugins_url( 'assets/css/frontend.css', __FILE__ ) );
+	wp_enqueue_script( 'rag-liked-post-frontend-script', plugins_url( 'rag-liked-post.js', __FILE__ ), [ 'wp-blocks' ], '', true );
+	wp_localize_script( 'rag-liked-post-frontend-script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 
 add_action( 'wp_enqueue_scripts', 'rag_liked_post_scripts' );
@@ -27,7 +30,7 @@ function rag_get_count_post_likes( $id, $type = 'rag_count_post_likes', $single 
 
 // Adding a Like Button to Posts
 add_action( 'the_post', function ( \WP_Post $post ) {
-	if ( is_admin() ) {
+	if ( is_admin() || defined( 'REST_REQUEST' ) ) {
 		return;
 	}
 
@@ -42,12 +45,15 @@ add_action( 'the_post', function ( \WP_Post $post ) {
 		// мета-поле есть
 		$arr = json_decode( $liked_posts, true );
 
-		foreach ( $arr as $key => $value ) {
-			if ( + $key == $post_id ) {
-				$btn_text       = 'Liked';
-				$btn_like_state = 'post-liked-btn';
+		if ( is_array( $arr ) || is_object( $arr ) ) {
+			foreach ( $arr as $key => $value ) {
+				if ( + $key == $post_id ) {
+					$btn_text       = 'Liked';
+					$btn_like_state = 'post-liked-btn';
+				}
 			}
 		}
+
 	}
 
 	ob_start();
@@ -112,4 +118,10 @@ if ( wp_doing_ajax() ) {
 	add_action( 'wp_ajax_my_action', 'my_action_callback' );
 }
 
+function example_block_editor_scripts() {
+	wp_enqueue_script( 'rag-liked-post-blocks', plugins_url( 'assets/js/build/block.js', __FILE__ ), [ 'wp-blocks' ], '', true );
+}
 
+add_action( 'enqueue_block_editor_assets', 'example_block_editor_scripts' );
+
+require_once( 'includes/blocks.php' );
