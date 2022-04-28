@@ -8,7 +8,7 @@ jQuery( function($) {
 			let postID = postLikeBtn.hasAttribute('data-post-id') ? postLikeBtn.getAttribute('data-post-id') : null;
 
 			let data = {
-				action: 'my_action',
+				action: 'like_button_action',
 				id: postID,
 			};
 

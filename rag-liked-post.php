@@ -10,19 +10,19 @@
  * License:     GPL-2.0+
  */
 
-define( 'RAG_LIKED_POST__FILE__', __FILE__ );
-define( 'RAG_LIKED_POST_PATH', plugin_dir_path( RAG_LIKED_POST__FILE__ ) );
+define( 'RAG_LP__FILE__', __FILE__ );
+define( 'RAG_LP_PATH', plugin_dir_path( RAG_LP__FILE__ ) );
 
-// include script
-function rag_liked_post_scripts() {
+// Connecting script
+function rag_lp_block_frontend_scripts() {
 	wp_enqueue_style( 'rag-liked-post-frontend-style', plugins_url( 'assets/css/frontend.css', __FILE__ ) );
 	wp_enqueue_script( 'rag-liked-post-frontend-script', plugins_url( 'rag-liked-post.js', __FILE__ ), [ 'wp-blocks' ], '', true );
 	wp_localize_script( 'rag-liked-post-frontend-script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 
-add_action( 'wp_enqueue_scripts', 'rag_liked_post_scripts' );
+add_action( 'wp_enqueue_scripts', 'rag_lp_block_frontend_scripts' );
 
-function rag_get_count_post_likes( $id, $type = 'rag_count_post_likes', $single = true ) {
+function rag_lp_get_count_post_likes( $id, $type = 'rag_count_post_likes', $single = true ) {
 	$current_count_likes = get_post_meta( $id, $type, $single );
 
 	return ( $current_count_likes ? $current_count_likes : 0 );
@@ -36,7 +36,7 @@ add_action( 'the_post', function ( \WP_Post $post ) {
 
 	$user_id          = get_current_user_id();
 	$post_id          = $post->ID;
-	$count_post_likes = rag_get_count_post_likes( $post_id );
+	$count_post_likes = rag_lp_get_count_post_likes( $post_id );
 	$key_user_meta    = 'rag_liked_posts';
 	$liked_posts      = get_user_meta( $user_id, $key_user_meta, true );
 	$btn_text         = 'Like';
@@ -63,13 +63,13 @@ add_action( 'the_post', function ( \WP_Post $post ) {
 	echo ob_get_clean();
 }, 10, 1 );
 
-function my_action_callback() {
+function rag_lp_like_button_callback() {
 	$user_id          = get_current_user_id();
 	$post_id          = $_POST['id'];
 	$key_user_meta    = 'rag_liked_posts';
 	$key_post_meta    = 'rag_count_post_likes';
 	$liked_posts      = get_user_meta( $user_id, $key_user_meta, true );
-	$count_post_likes = rag_get_count_post_likes( $post_id );
+	$count_post_likes = rag_lp_get_count_post_likes( $post_id );
 
 	if ( '' !== $liked_posts ) {
 		// мета-поле есть
@@ -115,13 +115,13 @@ function my_action_callback() {
 }
 
 if ( wp_doing_ajax() ) {
-	add_action( 'wp_ajax_my_action', 'my_action_callback' );
+	add_action( 'wp_ajax_like_button_action', 'rag_lp_like_button_callback' );
 }
 
-function example_block_editor_scripts() {
+function rag_lp_block_editor_scripts() {
 	wp_enqueue_script( 'rag-liked-post-blocks', plugins_url( 'assets/js/build/block.js', __FILE__ ), [ 'wp-blocks' ], '', true );
 }
 
-add_action( 'enqueue_block_editor_assets', 'example_block_editor_scripts' );
+add_action( 'enqueue_block_editor_assets', 'rag_lp_block_editor_scripts' );
 
 require_once( 'includes/blocks.php' );
